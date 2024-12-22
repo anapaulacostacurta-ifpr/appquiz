@@ -1,104 +1,118 @@
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+// Configuração do Firebase
+const configuracaoFirebase = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_PROJETO_ID.firebaseapp.com",
+    projectId: "SEU_PROJETO_ID",
+    storageBucket: "SEU_PROJETO_ID.appspot.com",
+    messagingSenderId: "SEU_ID_MENSAGENS",
+    appId: "SEU_APP_ID"
 };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+// Inicializar Firebase
+const app = firebase.initializeApp(configuracaoFirebase);
 const db = firebase.firestore(app);
 
-// Elements
-const questionInput = document.getElementById('question');
-const answerInput = document.getElementById('answer');
-const timeLimitInput = document.getElementById('time-limit');
-const addQuestionButton = document.getElementById('add-question');
+// Elementos
+const entradaPergunta = document.getElementById('question');
+const entradaTipoPergunta = document.getElementById('question-type');
+const entradaRespostas = document.getElementById('answers');
+const entradaFeedbackAcerto = document.getElementById('feedback-correct');
+const entradaFeedbackErro = document.getElementById('feedback-wrong');
+const botaoAdicionarPergunta = document.getElementById('add-question');
+const listaPerguntas = document.getElementById('question-list');
 
-const rollDiceButton = document.getElementById('roll-dice');
-const activitySection = document.getElementById('activity-section');
-const activityQuestion = document.getElementById('activity-question');
-const playerAnswerInput = document.getElementById('player-answer');
-const submitAnswerButton = document.getElementById('submit-answer');
-const timerDisplay = document.getElementById('timer');
+// Função: Adicionar Pergunta ao Firestore
+botaoAdicionarPergunta.addEventListener('click', async () => {
+    const pergunta = entradaPergunta.value.trim();
+    const tipo = entradaTipoPergunta.value;
+    const respostas = entradaRespostas.value.split(',').map(resposta => resposta.trim());
+    const feedbackAcerto = entradaFeedbackAcerto.value.trim();
+    const feedbackErro = entradaFeedbackErro.value.trim();
 
-// Event: Add Question to Firestore
-addQuestionButton.addEventListener('click', async () => {
-    const question = questionInput.value.trim();
-    const answer = answerInput.value.trim();
-    const timeLimit = parseInt(timeLimitInput.value, 10);
-
-    if (question && answer && timeLimit) {
+    if (pergunta && tipo && respostas.length > 0 && feedbackAcerto && feedbackErro) {
         try {
-            await db.collection('questions').add({
-                question,
-                answer,
-                timeLimit
+            await db.collection('perguntas').add({
+                pergunta,
+                tipo,
+                respostas,
+                feedbackAcerto,
+                feedbackErro
             });
-            alert('Question added successfully!');
-            questionInput.value = '';
-            answerInput.value = '';
-            timeLimitInput.value = '';
-        } catch (error) {
-            console.error('Error adding question:', error);
+            alert('Pergunta cadastrada com sucesso!');
+            entradaPergunta.value = '';
+            entradaRespostas.value = '';
+            entradaFeedbackAcerto.value = '';
+            entradaFeedbackErro.value = '';
+            carregarPerguntas();
+        } catch (erro) {
+            console.error('Erro ao cadastrar pergunta:', erro);
         }
     } else {
-        alert('Please fill out all fields!');
+        alert('Por favor, preencha todos os campos!');
     }
 });
 
-// Timer Function
-function startTimer(seconds, callback) {
-    let remainingTime = seconds;
-    timerDisplay.textContent = `Time left: ${remainingTime}s`;
+// Função: Carregar Perguntas do Firestore
+async function carregarPerguntas() {
+    try {
+        const consulta = await db.collection('perguntas').get();
+        listaPerguntas.innerHTML = '';
 
-    const timerInterval = setInterval(() => {
-        remainingTime--;
-        timerDisplay.textContent = `Time left: ${remainingTime}s`;
+        consulta.forEach(doc => {
+            const dados = doc.data();
+            const item = document.createElement('li');
+            item.textContent = `${dados.pergunta} (${dados.tipo})`;
 
-        if (remainingTime <= 0) {
-            clearInterval(timerInterval);
-            timerDisplay.textContent = 'Time is up!';
-            callback();
-        }
-    }, 1000);
+            const botaoEditar = document.createElement('button');
+            botaoEditar.textContent = 'Editar';
+            botaoEditar.addEventListener('click', () => editarPergunta(doc.id, dados));
+
+            const botaoExcluir = document.createElement('button');
+            botaoExcluir.textContent = 'Excluir';
+            botaoExcluir.addEventListener('click', () => excluirPergunta(doc.id));
+
+            item.appendChild(botaoEditar);
+            item.appendChild(botaoExcluir);
+            listaPerguntas.appendChild(item);
+        });
+    } catch (erro) {
+        console.error('Erro ao carregar perguntas:', erro);
+    }
 }
 
-// Event: Roll Dice
-rollDiceButton.addEventListener('click', async () => {
-    try {
-        const querySnapshot = await db.collection('questions').get();
-        const questions = querySnapshot.docs.map(doc => doc.data());
+// Função: Editar Pergunta
+async function editarPergunta(id, dados) {
+    const novaPergunta = prompt('Edite a pergunta:', dados.pergunta);
+    const novoFeedbackAcerto = prompt('Edite o feedback de acerto:', dados.feedbackAcerto);
+    const novoFeedbackErro = prompt('Edite o feedback de erro:', dados.feedbackErro);
 
-        if (questions.length > 0) {
-            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-
-            activitySection.style.display = 'block';
-            activityQuestion.textContent = randomQuestion.question;
-            playerAnswerInput.value = '';
-
-            startTimer(randomQuestion.timeLimit, () => {
-                alert('Time is up!');
-                activitySection.style.display = 'none';
+    if (novaPergunta && novoFeedbackAcerto && novoFeedbackErro) {
+        try {
+            await db.collection('perguntas').doc(id).update({
+                pergunta: novaPergunta,
+                feedbackAcerto: novoFeedbackAcerto,
+                feedbackErro: novoFeedbackErro
             });
-        } else {
-            alert('No questions available!');
+            alert('Pergunta atualizada com sucesso!');
+            carregarPerguntas();
+        } catch (erro) {
+            console.error('Erro ao atualizar pergunta:', erro);
         }
-    } catch (error) {
-        console.error('Error fetching questions:', error);
     }
-});
+}
 
-// Event: Submit Answer
-submitAnswerButton.addEventListener('click', () => {
-    const playerAnswer = playerAnswerInput.value.trim();
-    if (playerAnswer) {
-        alert(`Your answer: ${playerAnswer}`);
-        activitySection.style.display = 'none';
-    } else {
-        alert('Please enter an answer!');
+// Função: Excluir Pergunta
+async function excluirPergunta(id) {
+    if (confirm('Tem certeza que deseja excluir esta pergunta?')) {
+        try {
+            await db.collection('perguntas').doc(id).delete();
+            alert('Pergunta excluída com sucesso!');
+            carregarPerguntas();
+        } catch (erro) {
+            console.error('Erro ao excluir pergunta:', erro);
+        }
     }
-});
+}
+
+// Carregar perguntas ao iniciar
+carregarPerguntas();

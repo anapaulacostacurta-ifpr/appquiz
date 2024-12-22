@@ -1,45 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Game</title>
+    <title>Jogo de Quiz Multiplayer</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js"></script>
 </head>
 <body>
     <div id="app">
-        <h1>Quiz Game</h1>
-        <div id="admin-section">
-            <h2>Admin Panel</h2>
-            <label for="question">Question:</label>
-            <input type="text" id="question" placeholder="Enter the question">
+        <h1>Jogo de Quiz Multiplayer</h1>
+        <div id="login-section">
+            <h2>Entrar no Jogo</h2>
+            <label for="player-name">Nome do Jogador:</label>
+            <input type="text" id="player-name" placeholder="Digite seu nome">
 
-            <label for="answer">Answer:</label>
-            <input type="text" id="answer" placeholder="Enter the answer">
-
-            <label for="time-limit">Time Limit (seconds):</label>
-            <input type="number" id="time-limit" min="5" max="60" placeholder="Set time limit">
-
-            <button id="add-question">Add Question</button>
+            <button id="start-game">Iniciar Jogo</button>
         </div>
 
-        <div id="game-section">
-            <h2>Game</h2>
-            <p id="message">Roll the dice to start!</p>
-            <button id="roll-dice">Roll Dice</button>
+        <div id="admin-section">
+            <h2>Painel do Administrador</h2>
+
+            <label for="question">Pergunta:</label>
+            <input type="text" id="question" placeholder="Digite a pergunta">
+
+            <label for="question-type">Tipo de Pergunta:</label>
+            <select id="question-type">
+                <option value="multipla-escolha">Múltipla Escolha</option>
+                <option value="resposta-unica">Resposta Única</option>
+            </select>
+
+            <label for="answers">Respostas (separadas por vírgula):</label>
+            <input type="text" id="answers" placeholder="Digite as opções de resposta">
+
+            <label for="feedback-correct">Feedback para Acerto:</label>
+            <input type="text" id="feedback-correct" placeholder="Mensagem de acerto">
+
+            <label for="feedback-wrong">Feedback para Erro:</label>
+            <input type="text" id="feedback-wrong" placeholder="Mensagem de erro">
+
+            <label for="time-limit">Tempo Limite (segundos):</label>
+            <input type="number" id="time-limit" placeholder="Digite o tempo limite">
+
+            <button id="add-question">Adicionar Pergunta</button>
+
+            <h3>Perguntas Cadastradas</h3>
+            <ul id="question-list"></ul>
+        </div>
+
+        <div id="game-section" style="display: none;">
+            <h2>Jogo</h2>
+            <p id="welcome-message"></p>
+            <p id="message">Escolha uma atividade para começar!</p>
+
+            <button id="start-quiz">Quiz</button>
+            <button id="start-challenge">Desafio</button>
+            <button id="start-luck">Sorte/Revez</button>
+
+            <div id="token-section" style="display: none;">
+                <h3>Validação de Token</h3>
+                <label for="activity-token">Digite o Token para Acessar:</label>
+                <input type="text" id="activity-token" placeholder="Digite o token">
+                <button id="validate-token">Validar Token</button>
+            </div>
 
             <div id="activity-section" style="display: none;">
-                <h3>Activity</h3>
+                <h3>Atividade</h3>
                 <p id="activity-question"></p>
-                <input type="text" id="player-answer" placeholder="Your answer">
-                <button id="submit-answer">Submit</button>
+                <input type="text" id="player-answer" placeholder="Sua resposta">
+                <button id="submit-answer">Enviar Resposta</button>
                 <p id="timer"></p>
             </div>
+
+            <h3>Pontuação</h3>
+            <ul id="scoreboard"></ul>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
