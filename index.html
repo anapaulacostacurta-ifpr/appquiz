@@ -1,83 +1,97 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Quiz Multiplayer</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js"></script>
-</head>
-<body>
-    <div id="app">
-        <h1>Jogo de Quiz Multiplayer</h1>
-        <div id="login-section">
-            <h2>Entrar no Jogo</h2>
-            <label for="player-name">Nome do Jogador:</label>
-            <input type="text" id="player-name" placeholder="Digite seu nome">
-
-            <button id="start-game">Iniciar Jogo</button>
-        </div>
-
-        <div id="admin-section">
-            <h2>Painel do Administrador</h2>
-
-            <label for="question">Pergunta:</label>
-            <input type="text" id="question" placeholder="Digite a pergunta">
-
-            <label for="question-type">Tipo de Pergunta:</label>
-            <select id="question-type">
-                <option value="multipla-escolha">Múltipla Escolha</option>
-                <option value="resposta-unica">Resposta Única</option>
-            </select>
-
-            <label for="answers">Respostas (separadas por vírgula):</label>
-            <input type="text" id="answers" placeholder="Digite as opções de resposta">
-
-            <label for="feedback-correct">Feedback para Acerto:</label>
-            <input type="text" id="feedback-correct" placeholder="Mensagem de acerto">
-
-            <label for="feedback-wrong">Feedback para Erro:</label>
-            <input type="text" id="feedback-wrong" placeholder="Mensagem de erro">
-
-            <label for="time-limit">Tempo Limite (segundos):</label>
-            <input type="number" id="time-limit" placeholder="Digite o tempo limite">
-
-            <button id="add-question">Adicionar Pergunta</button>
-
-            <h3>Perguntas Cadastradas</h3>
-            <ul id="question-list"></ul>
-        </div>
-
-        <div id="game-section" style="display: none;">
-            <h2>Jogo</h2>
-            <p id="welcome-message"></p>
-            <p id="message">Escolha uma atividade para começar!</p>
-
-            <button id="start-quiz">Quiz</button>
-            <button id="start-challenge">Desafio</button>
-            <button id="start-luck">Sorte/Revez</button>
-
-            <div id="token-section" style="display: none;">
-                <h3>Validação de Token</h3>
-                <label for="activity-token">Digite o Token para Acessar:</label>
-                <input type="text" id="activity-token" placeholder="Digite o token">
-                <button id="validate-token">Validar Token</button>
-            </div>
-
-            <div id="activity-section" style="display: none;">
-                <h3>Atividade</h3>
-                <p id="activity-question"></p>
-                <input type="text" id="player-answer" placeholder="Sua resposta">
-                <button id="submit-answer">Enviar Resposta</button>
-                <p id="timer"></p>
-            </div>
-
-            <h3>Pontuação</h3>
-            <ul id="scoreboard"></ul>
-        </div>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie-edge" />
+    <link rel="manifest" href="./public/manifest.json">
+    <link rel="shortcut icon" href="./public/favicon.ico">
+    <title>Incrível Quiz</title>
+    <link rel="stylesheet" href="./src/styles/index.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+  </head>
+  <body id="page-home">
+    <div id="loader"></div>
+    <!-- start Quiz button -->
+    <div class="start_btn">
+      <button class="btn" id="button_play">Jogar o Quiz</button>
+      <a class="btn" id="button_score" href="./src/pages/highscores.html"
+        >Maiores Pontuações</a
+      >
     </div>
 
-    <script src="scripts.js"></script>
-</body>
+    <!-- Info Box -->
+    <div class="info_box">
+      <div class="info-title"><span>Algumas regras deste Quiz</span></div>
+      <div class="info-list">
+        <div class="info">
+          1. Você terá apenas<span> 15 segundos</span> para cada pergunta.
+        </div>
+        <div class="info">
+          2. Depois de selecionar sua resposta não pode ser desfeita.
+        </div>
+        <div class="info">
+          3. Você não pode selecionar opção depois que o tempo acabar.
+        </div>
+        <div class="info">
+          4. Você não pode sair do Quiz enquanto estiver jogando.
+        </div>
+        <div class="info">5. Você receberá 10 pontos por resposta correta.</div>
+      </div>
+      <div class="buttons">
+        <button class="quit">Sair do Quiz</button>
+        <button class="restart">Continuar</button>
+      </div>
+    </div>
+    <!-- Quiz Box -->
+    <div class="quiz_box">
+      <header>
+        <div class="title">Incrível Quiz</div>
+        <div class="timer">
+          <div class="time_left_txt">Tempo Restante</div>
+          <div class="timer_sec">15</div>
+        </div>
+        <div class="time_line"></div>
+      </header>
+      <section>
+        <div class="que_text">
+          <!-- Here I've inserted question from JavaScript -->
+        </div>
+        <div class="option_list">
+          <!-- Here I've inserted options from JavaScript -->
+        </div>
+      </section>
+      <!-- footer of Quiz Box -->
+      <footer>
+        <div class="total_que">
+          <!-- Here I've inserted Question Count Number from JavaScript -->
+        </div>
+        <div id="hud-item">
+          <p class="hud-prefix">Pontuação <span class="hud-main-text" id="score">0</span></p>
+        </div>
+        <button class="next_btn">Próxima Questão</button>
+      </footer>
+    </div>
+    <!-- Result Box -->
+    <div class="result_box">
+      <div class="icon">
+        <i class="fas fa-crown"></i>
+      </div>
+      <div class="complete_text">Você completou o Quiz!!</div>
+      <div class="score_text">
+        <!-- Here I've inserted Score Result from JavaScript -->
+      </div>
+      <div class="buttons">
+        <button class="restart">Salvar Quiz</button>
+        <button class="quit">Sair do Quiz</button>
+      </div>
+    </div>
+    <!-- Inside this JavaScript file I've inserted Questions and Options only -->
+    <script src="./src/data/questions.js"></script>
+    <!-- Inside this JavaScript file I've coded all Quiz Codes -->
+    <script src="./src/javascript/index.js"></script>
+  </body>
 </html>
