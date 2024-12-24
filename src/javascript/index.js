@@ -44,7 +44,7 @@ continue_btn.onclick = () => {
     questions = await questionService.getAll();
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
-    startTimer(question.time); //calling startTimer function
+    startTimer(15); //calling startTimer function
     startTimerLine(0);
   }
 };
