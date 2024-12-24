@@ -44,7 +44,7 @@ continue_btn.onclick = () => {
     questions = await questionService.getAll();
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
-    startTimer(15); //calling startTimer function
+    startTimer(question.time); //calling startTimer function
     startTimerLine(0);
   }
 };
@@ -100,25 +100,11 @@ function showQuetions(index) {
   loader.classList.add("hidden");
   const que_text = document.querySelector(".que_text");
   //creating a new span and div tag for question and option and passing the value using array index
-  let que_tag =
-    "<span>" +
-    questions[index].numb +
-    ". " +
-    questions[index].question +
-    "</span>";
-  let option_tag =
-    '<div class="option"><p class="choice-prefix">A</p><p class="choice-text" data-number="1"><span class="question">' +
-    questions[index].options[0] +
-    "</span></div>" +
-    '<div class="option"><p class="choice-prefix">B</p><p class="choice-text" data-number="2"><span class="question">' +
-    questions[index].options[1] +
-    "</span></p></div>" +
-    '<div class="option"><p class="choice-prefix">C</p><p class="choice-text" data-number="3"><span class="question">' +
-    questions[index].options[2] +
-    "</span></p></div>" +
-    '<div class="option"><p class="choice-prefix">D</p><p class="choice-text" data-number="4"><span class="question">' +
-    questions[index].options[3] +
-    "</span></p></div>";
+  let que_tag = "<span>" + questions[index].text +"</span>";
+  let option_tag = '';
+  for (i=0; i<=question.length; i++){
+    option_tag = option_tag + '<div class="option"><p class="choice-text" data-number="'+i+'"><span class="question">'+questions[i].options[i]+"</span></p></div>";
+  }
   que_text.innerHTML = que_tag; //adding new span tag inside que_tag
   option_list.innerHTML = option_tag; //adding new div tag inside option_tag
 
