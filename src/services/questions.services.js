@@ -1,6 +1,15 @@
 // Serviço para interação com o Firestore
 const questionService = {
-      getAll: async () => {
+    findByLevel: level => {
+        return firebase.firestore()
+            .collection("questions")
+            .doc(level)
+            .get()
+            .then(doc => {
+                return doc.data();
+            });
+    },  
+    getAll: async () => {
         // Verifica se as perguntas já estão armazenadas no localStorage
         const storedQuestions = localStorage.getItem("questions");
 

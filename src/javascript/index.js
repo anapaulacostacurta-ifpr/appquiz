@@ -13,8 +13,8 @@ const time_line = document.querySelector("header .time_line");
 const timeText = document.querySelector(".timer .time_left_txt");
 const timeCount = document.querySelector(".timer .timer_sec");
 
-const loader = document.getElementById("loader");
-loader.classList.add("hidden");
+//const loader = document.getElementById("loader");
+//loader.classList.add("hidden");
 
 // if startQuiz button clicked
 start_btn.onclick = () => {
@@ -32,15 +32,15 @@ continue_btn.onclick = () => {
   info_box.classList.remove("activeInfo"); //hide info box
   start_btn_home.classList.add("hidden");
 
-  loader.classList.remove("hidden");
+  //loader.classList.remove("hidden");
   const myTimeout = setTimeout(startQuiz, 3000);
 
   async function startQuiz() {    
-    loader.classList.add("hidden");
+    //loader.classList.add("hidden");
     start_btn_home.classList.remove("hidden");
     quiz_box.classList.add("activeQuiz"); //show quiz box
-    questions = await questionService.getAll();
-    //questions = questionService.findByLevel(1);
+    //questions = await questionService.getAll();
+    questions = questionService.findByLevel(2);
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
     startTimer(15); //calling startTimer function
@@ -96,7 +96,7 @@ next_btn.onclick = () => {
 
 // getting questions and options from array
 function showQuetions(index) {
-  loader.classList.add("hidden");
+  //loader.classList.add("hidden");
   const que_text = document.querySelector(".que_text");
   //creating a new span and div tag for question and option and passing the value using array index
   let que_tag = "<span>" + questions[index].text +"</span>";
