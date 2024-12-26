@@ -1,5 +1,3 @@
-
-
 //selecting all required elements
 const start_btn_home = document.querySelector(".start_btn");
 const start_btn = document.querySelector(".start_btn #button_play");
@@ -41,8 +39,8 @@ continue_btn.onclick = () => {
     loader.classList.add("hidden");
     start_btn_home.classList.remove("hidden");
     quiz_box.classList.add("activeQuiz"); //show quiz box
-    //questions = await questionService.getAll();
-    questions = questionService.findByLevel(1);
+    questions = await questionService.getAll();
+    //questions = questionService.findByLevel(1);
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
     startTimer(15); //calling startTimer function
