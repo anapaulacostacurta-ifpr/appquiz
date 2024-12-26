@@ -42,7 +42,7 @@ continue_btn.onclick = () => {
     start_btn_home.classList.remove("hidden");
     quiz_box.classList.add("activeQuiz"); //show quiz box
     //questions = await questionService.getAll();
-    questions = await questionService.findByLevel(1);
+    questions = questionService.findByLevel(1);
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
     startTimer(15); //calling startTimer function
