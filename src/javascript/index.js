@@ -41,7 +41,8 @@ continue_btn.onclick = () => {
     loader.classList.add("hidden");
     start_btn_home.classList.remove("hidden");
     quiz_box.classList.add("activeQuiz"); //show quiz box
-    questions = await questionService.getAll();
+    //questions = await questionService.getAll();
+    questions = await questionService.findByLevel(1);
     showQuetions(0); //calling showQestions function
     queCounter(1); //passing 1 parameter to queCounter
     startTimer(15); //calling startTimer function
@@ -115,6 +116,7 @@ function showQuetions(index) {
     option[i].setAttribute("onclick", "optionSelected(this)");
   }
 }
+
 // creating the new div tags which for icons
 let tickIconTag = '<div class="icon tick"><i class="fas fa-check"></i></div>';
 let crossIconTag = '<div class="icon cross"><i class="fas fa-times"></i></div>';
@@ -126,6 +128,7 @@ function optionSelected(answer) {
   let userAns = answer.querySelector(".choice-text").textContent; //getting user selected option
   let correcAns = questions[que_count].answer; //getting correct answer from array
   const allOptions = option_list.children.length; //getting all option items
+
   if (userAns == correcAns) {
     //if user selected option is equal to array's correct answer
     userScore += 1; //upgrading score value with 1
@@ -153,6 +156,7 @@ function optionSelected(answer) {
   }
   next_btn.classList.add("show"); //show the next button if user selected any option
 }
+
 
 function showResult() {
   info_box.classList.remove("activeInfo"); //hide info box
